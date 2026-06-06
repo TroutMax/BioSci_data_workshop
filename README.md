@@ -1,25 +1,28 @@
 # Introduction to Data Analysis with Python
 ### A 45-minute hands-on workshop for biomedical & biology researchers
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/forest929/python-data-workshop/blob/main/workshop_notebook.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/forest929/python-data-workshop/blob/main/workshop_notebook_4.ipynb)
 
 ---
 
 ## What this workshop covers
 
-A practical introduction to Python for researchers who use Excel today and want a more reproducible, scalable workflow. No prior programming experience required.
+A practical introduction to Python for researchers who use Excel today and want to produce publication-quality figures. No prior programming experience required.
 
-| Section | What you do |
-|---------|-------------|
-| Load data | Pull a real published dataset directly from GitHub into Python |
-| Explore & clean | Select columns, handle missing values, audit categories |
-| GroupBy | Replicate an Excel Pivot Table in one line |
-| Visualise | Histogram, box plot, bar chart, scatter plot |
-| Statistics | Mann-Whitney U test — China vs other countries |
-| Your turn | 3 exercises with hidden hints |
+| # | Section | Time |
+|---|---------|------|
+| 0 | Setup | 2 min |
+| 1 | Load & prepare data | 5 min |
+| 2 | Explore the data | 5 min |
+| 3a | Violin + box chart | 8 min |
+| 3b | Grouped bar chart | 8 min |
+| 3c | Composite 2-panel figure | 7 min |
 
-**Dataset:** COVID-19 hospital length of stay — extracted from 100+ peer-reviewed studies.
-*Rees et al. (2020), BMC Medicine. Source: [HDRUK/los_review](https://github.com/HDRUK/los_review)*
+**Dataset:** Our World in Data — COVID-19 daily pandemic statistics for 240+ countries, 2020–2024.
+Variables: smoothed death rates, vaccination coverage, GDP per capita.
+*Source: [owid/covid-19-data](https://github.com/owid/covid-19-data)*
+
+**Today's goal:** Build figures that look like they belong in a journal article — applying design conventions from a real *Journal of Bacteriology* paper to answer real epidemiological questions.
 
 ---
 
@@ -35,7 +38,7 @@ Click the **Open in Colab** badge above. The notebook loads instantly in your br
 git clone https://github.com/forest929/python-data-workshop.git
 cd python-data-workshop
 pip install -r requirements.txt
-jupyter lab workshop_notebook.ipynb
+jupyter lab workshop_notebook_4.ipynb
 ```
 
 ---
@@ -43,9 +46,8 @@ jupyter lab workshop_notebook.ipynb
 ## Repository contents
 
 ```
-├── workshop_notebook.ipynb     Main hands-on notebook (open this in Colab)
+├── workshop_notebook_4.ipynb   Main hands-on notebook (open this in Colab)
 ├── resources.md                Take-home guide: setup, tools, mini project, links
-├── slides_outline.md           16-slide presenter deck with speaker notes
 ├── requirements.txt            Python packages needed to run locally
 └── mini_project_news/
     └── news_scraper.py         Standalone post-workshop project (RSS → HTML webpage)

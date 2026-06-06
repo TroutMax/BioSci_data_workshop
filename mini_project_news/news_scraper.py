@@ -1,15 +1,14 @@
 """
 News Update Webpage — Mini Project
 ===================================
-Fetches headlines from a public RSS feed, builds an HTML page,
+Fetches headlines from any RSS or Atom feed, builds an HTML page,
 and opens it in your browser.
 
-Requirements: pip install requests
+Requirements: pip install requests feedparser
 Run with:     python news_scraper.py
 """
 
-import requests
-import xml.etree.ElementTree as ET
+import feedparser
 import webbrowser
 import os
 from datetime import datetime
@@ -18,7 +17,16 @@ from datetime import datetime
 # CONFIGURATION — edit these to customise your feed
 # ---------------------------------------------------------------------------
 
-RSS_URL = "https://feeds.bbci.co.uk/news/rss.xml"
+# Uncomment the feed you want (or paste in any RSS/Atom URL)
+# RSS_URL = "https://feeds.bbci.co.uk/news/rss.xml"                          # BBC News
+# RSS_URL = "https://www.nature.com/nature.rss"                               # Nature
+# RSS_URL = "https://www.theguardian.com/science/rss"                         # Guardian Science
+# RSS_URL = "https://www.science.org/rss/news_current.xml"                    # Science magazine
+RSS_URL = "https://www.thelancet.com/rssfeed/lancet_online.xml"             # The Lancet
+# RSS_URL = "https://connect.biorxiv.org/biorxiv_xml.php?subject=bioinformatics"  # bioRxiv
+
+# Note on PubMed: PubMed RSS links require a session token generated from the website.
+# To get one: go to pubmed.ncbi.nlm.nih.gov → run a search → click "Create RSS" → copy the URL.
 
 # Optional: only keep articles whose title contains this word (leave "" for all)
 KEYWORD_FILTER = ""
@@ -27,33 +35,36 @@ KEYWORD_FILTER = ""
 OUTPUT_FILE = "news.html"
 
 # ---------------------------------------------------------------------------
-# 1. Fetch the RSS feed
+# 1. Fetch and parse the feed
+#    feedparser handles RSS 0.9/1.0/2.0, Atom, and malformed XML automatically
 # ---------------------------------------------------------------------------
 
-print("Fetching news headlines...")
-try:
-    response = requests.get(RSS_URL, timeout=10)
-    response.raise_for_status()
-except requests.exceptions.RequestException as e:
-    print(f"Error fetching feed: {e}")
+print(f"Fetching: {RSS_URL}")
+
+# Quick pre-check: if the server returns HTML instead of XML the URL is wrong
+import requests as _req
+_r = _req.get(RSS_URL, timeout=10)
+if "html" in _r.headers.get("Content-Type", "").lower() and _r.text.lstrip().startswith("<!"):
+    print("Error: the URL returned an HTML page, not a feed.")
+    print("Check that the URL points directly to an RSS/Atom feed (it should start with <?xml).")
+    print("For PubMed: go to pubmed.ncbi.nlm.nih.gov → search → 'Create RSS' → copy that URL.")
     raise SystemExit(1)
 
-# ---------------------------------------------------------------------------
-# 2. Parse the XML
-# ---------------------------------------------------------------------------
+feed = feedparser.parse(RSS_URL)
 
-root = ET.fromstring(response.content)
-channel = root.find("channel")
+if feed.bozo and not feed.entries:
+    print(f"Error reading feed: {feed.bozo_exception}")
+    raise SystemExit(1)
 
-feed_title = channel.findtext("title", default="News Feed")
+feed_title = feed.feed.get("title", "News Feed")
 articles = []
 
-for item in channel.findall("item"):
+for entry in feed.entries:
     articles.append({
-        "title":       item.findtext("title", ""),
-        "description": item.findtext("description", ""),
-        "link":        item.findtext("link", "#"),
-        "pub_date":    item.findtext("pubDate", ""),
+        "title":    entry.get("title", "(no title)"),
+        "description": entry.get("summary", ""),
+        "link":     entry.get("link", "#"),
+        "pub_date": entry.get("published", entry.get("updated", "")),
     })
 
 print(f"Found {len(articles)} articles from: {feed_title}")
@@ -64,7 +75,7 @@ if KEYWORD_FILTER:
     print(f"Filtered to {len(articles)} articles containing '{KEYWORD_FILTER}'")
 
 # ---------------------------------------------------------------------------
-# 3. Build the HTML page
+# 2. Build the HTML page
 # ---------------------------------------------------------------------------
 
 def make_card(article):
@@ -119,7 +130,7 @@ html_page = f"""<!DOCTYPE html>
 """
 
 # ---------------------------------------------------------------------------
-# 4. Save and open
+# 3. Save and open
 # ---------------------------------------------------------------------------
 
 with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
@@ -129,6 +140,6 @@ print(f"Saved → {OUTPUT_FILE}")
 webbrowser.open("file://" + os.path.abspath(OUTPUT_FILE))
 print("Done! Check your browser.")
 print()
-print("Tip: to serve this on a local web server instead, run:")
+print("Tip: to serve on a local web server instead, run:")
 print(f"  python -m http.server 8000")
 print(f"  then open http://localhost:8000/{OUTPUT_FILE}")

@@ -8,7 +8,7 @@ A self-contained guide for biomedical researchers who want to keep going after t
 
 You have two routes. Pick one.
 
-### Option A — Anaconda (recommended for scientists)
+### Option A — Anaconda
 
 Anaconda bundles Python, 300+ scientific packages, and the conda package manager in one installer.
 
@@ -18,17 +18,18 @@ Anaconda bundles Python, 300+ scientific packages, and the conda package manager
 4. Open **Anaconda Navigator** from your Applications / Start Menu
 5. Click **Launch** next to JupyterLab to open a notebook interface in your browser
 
-**Why choose this:** easiest start, nothing breaks, everything scientific is included.
+**Why choose this:** everything scientific is pre-bundled — nothing to install separately. Note: the installer is large (~3 GB) and includes many packages you may never use.
 
-### Option B — Python from python.org (lightweight)
+### Option B — Python from python.org (recommended)
 
 1. Go to **[python.org/downloads](https://www.python.org/downloads/)**
 2. Download the latest stable release (e.g. Python 3.12.x)
 3. Run the installer — on Windows, tick **"Add Python to PATH"** before clicking Install
 4. Open your terminal (Mac: `Terminal`; Windows: `Command Prompt` or `PowerShell`)
 5. Confirm it worked: `python --version`
+6. Install just the packages you need (see Section 3): `pip install pandas matplotlib seaborn scipy`
 
-**Why choose this:** lighter install, more control, but you install packages yourself (see Section 3).
+**Why choose this:** lightweight (~30 MB), installs in seconds, and you only add packages you actually use. Recommended for most researchers.
 
 ---
 
@@ -403,10 +404,15 @@ Try these modifications once the basic version works:
 
 | Source | RSS URL |
 |--------|---------|
-| Nature News | `https://www.nature.com/nature.rss` |
-| Reuters Science | `https://feeds.reuters.com/reuters/scienceNews` |
-| PubMed (search results) | `https://pubmed.ncbi.nlm.nih.gov/rss/search/?term=CRISPR&format=rss` |
+| Nature | `https://www.nature.com/nature.rss` |
+| Science magazine | `https://www.science.org/rss/news_current.xml` |
+| The Lancet | `https://www.thelancet.com/rssfeed/lancet_online.xml` |
+| bioRxiv – bioinformatics | `https://connect.biorxiv.org/biorxiv_xml.php?subject=bioinformatics` |
 | The Guardian Science | `https://www.theguardian.com/science/rss` |
+| BBC News | `https://feeds.bbci.co.uk/news/rss.xml` |
+
+> **PubMed note:** PubMed RSS feeds require a personal token — you can't construct the URL manually.
+> To get one: go to [pubmed.ncbi.nlm.nih.gov](https://pubmed.ncbi.nlm.nih.gov) → run your search → click **Create RSS** below the search bar → copy the generated URL.
 
 **Auto-refresh every hour** — add a `<meta>` refresh tag in the HTML `<head>`:
 
